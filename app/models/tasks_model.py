@@ -26,5 +26,12 @@ class TasksModel(db.Model):
     
     eisenhower_id = db.Column(db.Integer, db.ForeignKey('eisenhowers.id'), nullable=False)
     
-    categories = db.relationship("CategoryModel",secondary=tasks_categories, backref="tasks")
-   
+    @staticmethod
+    def validate_keys(data):
+        
+        keys_taks = ['name','description','duration','importance','urgency','eisenhower_id'] 
+        
+        for x in data : 
+            if x not in keys_taks: 
+                return False
+        return True

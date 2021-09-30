@@ -16,4 +16,5 @@ class EisenhowersModel(db.Model):
     type = db.Column(db.String(100))
     
     tasks = db.relationship("TasksModel", backref="eisenhower")
-   
+    
+    

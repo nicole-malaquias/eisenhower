@@ -2,11 +2,9 @@
 import sqlalchemy
 from app.configs.database import db
 from app.models.categories_model import CategoryModel
-from flask import current_app, jsonify, request
+from flask import jsonify, request
 
-session = db.session
 
-    
 def insert_categories(): 
     
     data = request.json
@@ -14,8 +12,8 @@ def insert_categories():
     try:
         category = CategoryModel(**data)
        
-        session.add(category)
-        session.commit()
+        db.session.add(category)
+        db.session.commit()
         return  jsonify(category),201
     except sqlalchemy.exc.IntegrityError:
         
@@ -28,7 +26,7 @@ def update_categories(id: int):
     
     CategoryModel.query.filter_by(id=id).update(data)
     
-    session.commit()
+    db.session.commit()
     category = CategoryModel.query.get(id)
     
     if category is not None:
@@ -37,14 +35,14 @@ def update_categories(id: int):
     return {"msg":"category not found!"}
     
 def delete_categories(id:int):
-
    
-    subquery = CategoryModel.query.filter_by(id=id)
+   
+    subquery = CategoryModel.query.get(id)
+    if subquery is None:
+         return {"msg":"category not found!"}
+     
+     
     db.session.delete(subquery)
     db.session.commit()
-    return 'oi',200
-
-    # return jsonify(query), 200
+    return "",204
     
-    # except:
-    #     return {"msg":"category not found!"}

@@ -18,7 +18,7 @@ class CategoryModel(db.Model):
     name = db.Column(db.String(100), nullable=False , unique=True)
     description = db.Column(db.String(100))
 
-    tasks_categories = db.relationship("TasksModel",secondary=tasks_categories, backref="category")
+    tasks = db.relationship("TasksModel",secondary=tasks_categories, backref="categories")
     
     
     
