@@ -57,27 +57,24 @@ def insert_task():
     except FieldError as err:
         return jsonify( err.message ),422
     
-def update_task():
+def update_task(id:int):
     
-    ...
+    new_id = TasksModel.query.get(id).id
+    data = request.json
+    dic = dict(data)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    eisenhower = change_eisenhower(data,new_id)
+    change_categories(data,new_id)
+   
+    del dic['categories'] 
+    TasksModel.query.filter_by(id = new_id).update(dic)
+    db.session.commit()
+    
+    task = TasksModel.query.get(new_id)
+    r = create_response_insert(task.id)
+    print(r)
+    
+    return jsonify(data)
 
 
 def delete_task(id:int):
@@ -109,7 +106,7 @@ def check_eisenhower(urgency,importance):
     return ''
 
 def search_id_eisenhower(name):
-  
+    
     eise = EisenhowersModel.query.filter_by(type = name).all()[0]
     return eise.id
     
@@ -168,10 +165,65 @@ def create_response_insert(id):
     
     return response
 
+def change_eisenhower(data,id):
+    
+    task = TasksModel.query.get(id)
+  
+    urgency = 'urgency' in data 
+    importance = 'importance' in data 
 
+    new_urgency = task.urgency 
+    new_importance = task.importance 
+    
+    if urgency :
+        new_urgency = data['urgency']
+        
+    if importance :
+        new_importance = data['importance']
+    
+    type_eisenhower = check_eisenhower(new_urgency, new_importance) 
+    
+  
+    id = search_id_eisenhower(type_eisenhower)
 
+    TasksModel.query.filter_by(id = task.id).update({"eisenhower_id":id})
+    
+    db.session.commit()    
+    
+    return type_eisenhower
 
-
+def change_categories(data,id_task): 
+    try :
+        
+        if data['categories']: 
+            
+            check_categories_exists(data)
+             
+            list = TaskCategoriesModel.query.filter_by(task_id = id_task).all() 
+            
+            for category in list :
+                id_category = category.id 
+                subquery = TaskCategoriesModel.query.get(id_category)
+                db.session.delete(subquery)
+                db.session.commit()
+            
+            for category in data['categories'] :
+                
+                category_id = CategoryModel.query.filter_by(name = category['name']).first()        
+                task_categorie = TaskCategoriesModel(task_id=id_task, category_id=category_id.id)
+  
+                db.session.add(task_categorie)
+                db.session.commit()        
+    except :
+        return ''
+        
+    
+    
+    
+    
+    
+    
+    
 
 
 
