@@ -1,8 +1,8 @@
 
 from app.configs.database import db
 from dataclasses import dataclass
-from sqlalchemy.orm import relationship
-from app.models.tasks_categories import tasks_categories
+from sqlalchemy.orm import backref, relationship
+from app.models.tasks_categories import TaskCategoriesModel
 
 @dataclass
 class TasksModel(db.Model):
@@ -26,12 +26,3 @@ class TasksModel(db.Model):
     
     eisenhower_id = db.Column(db.Integer, db.ForeignKey('eisenhowers.id'), nullable=False)
     
-    @staticmethod
-    def validate_keys(data):
-        
-        keys_taks = ['name','description','duration','importance','urgency','eisenhower_id'] 
-        
-        for x in data : 
-            if x not in keys_taks: 
-                return False
-        return True
