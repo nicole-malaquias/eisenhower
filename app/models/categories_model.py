@@ -1,4 +1,5 @@
 
+from sqlalchemy.orm import relationship
 from app.models.tasks_categories import TaskCategoriesModel
 
 from app.configs.database import db
@@ -19,6 +20,7 @@ class CategoryModel(db.Model):
     name = db.Column(db.String(100), nullable=False , unique=True)
     description = db.Column(db.String(100))
 
+    # task = relationship('TasksModel', backref='categories')
 
     
     

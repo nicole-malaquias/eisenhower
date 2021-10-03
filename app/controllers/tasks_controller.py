@@ -72,10 +72,8 @@ def update_task(id:int):
     
     task = TasksModel.query.get(new_id)
     r = create_response_insert(task.id)
-    print(r)
     
-    return jsonify(data)
-
+    return jsonify(r)
 
 def delete_task(id:int):
     
@@ -155,6 +153,9 @@ def create_response_insert(id):
     
     response = asdict(objecto)
     response['eisenhower'] = objecto.eisenhower.type
+    
+   
+    
     del response['eisenhower_id']
     
     query_categories =  db.session.query(CategoryModel.name).filter(TaskCategoriesModel.task_id == TasksModel.id).filter(TaskCategoriesModel.category_id == CategoryModel.id).filter(TasksModel.id == id).all() 
@@ -162,7 +163,6 @@ def create_response_insert(id):
   
   
     response['categories'] = covert
-    
     return response
 
 def change_eisenhower(data,id):
@@ -217,9 +217,7 @@ def change_categories(data,id_task):
     except :
         return ''
         
-    
-    
-    
+
     
     
     
