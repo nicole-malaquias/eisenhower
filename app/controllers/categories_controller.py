@@ -68,10 +68,25 @@ def delete_categories(id:int):
 def get_all_categories():
     
     todas_categorias_query = CategoryModel.query.all()
-    # query = db.session.query(AlunoModel, AulaModel).select_from(AlunoModel).join(alunos_aulas).join(AulaModel).filter(AulaModel.id == 2).all()
+    
+    
+    query = db.session.query(CategoryModel ,  TasksModel).select_from(CategoryModel).join(TaskCategoriesModel).filter(TasksModel.id ==  TaskCategoriesModel.task_id).all()
 
-    query = db.session.query(TasksModel, CategoryModel).select_from(CategoryModel).join(TaskCategoriesModel).join(TasksModel).filter(TaskCategoriesModel.category_id == CategoryModel.id ).all()
+    
+    resposta = {}
 
-    print(query)
-    return jsonify('oi')
+    for x in todas_categorias_query :
+        categoria = x.name
+        resposta[categoria] = []
+
+        for i in query :
+            
+            nome_categoria_task = i[0].name
+         
+            if categoria == nome_categoria_task:
+               
+                resposta[categoria].append({"name":i[1].name,"description":i[1].description,"priority":i[1].eisenhower.type}) 
+            
+    
+    return jsonify(resposta)
  
