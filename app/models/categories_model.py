@@ -11,7 +11,7 @@ class CategoryModel(db.Model):
     id: int
     name: str
     description : str
-    task_: str
+    task: str
     
     __tablename__ = 'categories'
     
@@ -19,7 +19,7 @@ class CategoryModel(db.Model):
     name = db.Column(db.String(255), nullable=False , unique=True)
     description = db.Column(db.String(255))
 
-    task_ = relationship('TasksModel',secondary='tasks_categories', backref=backref('category_'))
+    task = relationship('TasksModel',secondary='tasks_categories', backref=db.backref('category'),viewonly=True)
 
     
     
