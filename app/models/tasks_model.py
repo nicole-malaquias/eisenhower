@@ -2,7 +2,7 @@
 from app.configs.database import db
 from dataclasses import dataclass
 from sqlalchemy.orm import backref, relationship
-from app.models.tasks_categories import TaskCategoriesModel
+from app.models.tasks_categories_model import TaskCategoriesModel
 
 @dataclass
 class TasksModel(db.Model):
@@ -13,8 +13,7 @@ class TasksModel(db.Model):
     duration: int
     importance: int
     urgency: int
-    eisenhower_id: int
-
+    
     __tablename__ = 'tasks'
     
     id  = db.Column(db.Integer, primary_key=True)
@@ -25,5 +24,4 @@ class TasksModel(db.Model):
     urgency = db.Column(db.Integer)
     
     eisenhower_id = db.Column(db.Integer, db.ForeignKey('eisenhowers.id'), nullable=False)
-    
-    # categorie = relationship('CategoryModel', backref='task')
+   

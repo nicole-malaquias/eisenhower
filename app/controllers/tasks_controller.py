@@ -5,15 +5,16 @@ from app.exc.FieldInvalidErrors import FieldError
 from app.exc.ImportanceErrors import ImportanceErrors
 from app.models.categories_model import CategoryModel
 from app.models.eisenhowers_model import EisenhowersModel
-from app.models.tasks_categories import TaskCategoriesModel
+from app.models.tasks_categories_model import TaskCategoriesModel
 from app.models.tasks_model import TasksModel
 from flask import jsonify, request
 
 
 def insert_task():
-  
+    
     data = request.json
    
+
     check_field = check_field_to_insert(data)
     eisenhower = check_eisenhower(data['urgency'],data['importance'])
     id_eisenhower = search_id_eisenhower(eisenhower)
@@ -152,15 +153,11 @@ def create_response_insert(id):
     objecto = TasksModel.query.get(id)
     
     response = asdict(objecto)
+    
     response['eisenhower'] = objecto.eisenhower.type
-    
-   
-    
-    del response['eisenhower_id']
     
     query_categories =  db.session.query(CategoryModel.name).filter(TaskCategoriesModel.task_id == TasksModel.id).filter(TaskCategoriesModel.category_id == CategoryModel.id).filter(TasksModel.id == id).all() 
     covert = [dict(x) for x in query_categories]
-  
   
     response['categories'] = covert
     return response
