@@ -60,7 +60,7 @@ def insert_task():
     
 def update_task(id:int):
     
-    new_id = TasksModel.query.get(id).id
+    new_id = TasksModel.query.get_or_404(id)
     data = request.json
     dic = dict(data)
 

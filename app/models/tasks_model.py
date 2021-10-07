@@ -25,5 +25,3 @@ class TasksModel(db.Model):
     
     eisenhower_id = db.Column(db.Integer, db.ForeignKey('eisenhowers.id'), nullable=False)
    
-    
-    # category = relationship('CategoryModel')
