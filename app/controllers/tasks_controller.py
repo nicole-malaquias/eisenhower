@@ -1,5 +1,7 @@
 
 from dataclasses import asdict
+
+import sqlalchemy
 from app.configs.database import db
 from app.exc.FieldInvalidErrors import FieldError
 from app.exc.ImportanceErrors import ImportanceErrors
@@ -14,7 +16,6 @@ def insert_task():
     
     data = request.json
    
-
     check_field = check_field_to_insert(data)
     eisenhower = check_eisenhower(data['urgency'],data['importance'])
     id_eisenhower = search_id_eisenhower(eisenhower)
@@ -58,20 +59,28 @@ def insert_task():
     except FieldError as err:
         return jsonify( err.message ),422
     
+    except sqlalchemy.exc.IntegrityError :
+        return {"msg": "Task already exists"},409
+    
+    
 def update_task(id:int):
     
     new_id = TasksModel.query.get_or_404(id)
+    # print(new_id)
+   
     data = request.json
     dic = dict(data)
-
-    eisenhower = change_eisenhower(data,new_id)
-    change_categories(data,new_id)
+    
+    change_eisenhower(data,id)
+    change_categories(data,id)
    
     del dic['categories'] 
-    TasksModel.query.filter_by(id = new_id).update(dic)
+    
+    TasksModel.query.filter_by(id = id).update(dic)
+    
     db.session.commit()
     
-    task = TasksModel.query.get(new_id)
+    task = TasksModel.query.get(id)
     r = create_response_insert(task.id)
     
     return jsonify(r)
@@ -134,7 +143,7 @@ def check_categories_exists(data):
             db.session.commit()
 
 def create_categories_task(id,data):
-    
+  
     categories = data['categories']
     
     for category in categories :
